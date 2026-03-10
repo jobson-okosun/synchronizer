@@ -1,6 +1,6 @@
 import { ChangeDetectionStrategy, Component, inject, signal } from '@angular/core';
 import { NonNullableFormBuilder, ReactiveFormsModule, Validators } from '@angular/forms';
-import { Router } from '@angular/router';
+import { Router, RouterLink } from '@angular/router';
 import { AuthService } from '../../services/auth.service';
 import { HotToastService } from '@ngxpert/hot-toast';
 import { finalize } from 'rxjs';
@@ -8,7 +8,7 @@ import { finalize } from 'rxjs';
 @Component({
   selector: 'app-signin',
   changeDetection: ChangeDetectionStrategy.OnPush,
-  imports: [ReactiveFormsModule],
+  imports: [ReactiveFormsModule, RouterLink],
   templateUrl: './signin.html',
   styleUrl: './signin.css',
 })
@@ -29,6 +29,7 @@ export default class Signin {
   });
 
   submit(event: Event): void {
+    void this.router.navigateByUrl('/app');
     const btn = event.target as HTMLButtonElement;
     btn.disabled = true;
 

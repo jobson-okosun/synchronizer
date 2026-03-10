@@ -4,6 +4,11 @@
             <h1 class="text-2xl font-semibold text-gray-900">Exam year</h1>
             <p class="mt-1 text-sm text-gray-600">Manage your exam year</p>
         </div>
+
+        <button (click)="showCreateYearModal.set(true)" class="btn fill" type="button">
+            <i class="pi pi-plus"></i>
+            Year
+        </button>
     </div>
 
     <div class="bg-white p-5 rounded-2xl">
@@ -53,3 +58,37 @@
         </div>
     </div>
 </div>
+
+<p-dialog
+    header="Create Year"
+    [(visible)]="showCreateYearModal"
+    [modal]="true"
+    [draggable]="false"
+    [resizable]="false"
+    [style]="{ width: 'min(460px, 92vw)' }"
+    (visibleChange)="createYearForm.reset()"
+    >       
+    <form class="grid grid-cols-1 gap-4" [formGroup]="createYearForm">
+            <div>
+                <label class="mb-1 block text-sm font-medium text-gray-700">Name</label>
+                <input type="text" class="h-11 w-full rounded-xl border border-gray-200 bg-white px-4 text-gray-900 outline-none transition focus:border-gray-300 focus:ring-2 focus:ring-gray-100" formControlName="name">
+            </div>
+            <div>
+                <label class="mb-1 block text-sm font-medium text-gray-700">Start date</label>
+                <input type="date" placeholder="e.g. 012" class="h-11 w-full rounded-xl border border-gray-200 bg-white px-4 text-gray-900 outline-none transition focus:border-gray-300 focus:ring-2 focus:ring-gray-100 placeholder:text-gray-400" formControlName="startdate">
+            </div>
+            <div>
+                <label class="mb-1 block text-sm font-medium text-gray-700">End date</label>
+                <input type="date" placeholder="e.g. 012" class="h-11 w-full rounded-xl border border-gray-200 bg-white px-4 text-gray-900 outline-none transition focus:border-gray-300 focus:ring-2 focus:ring-gray-100 placeholder:text-gray-400" formControlName="enddate">
+            </div>
+
+            <div class="mt-2 flex flex-wrap items-center gap-3">
+                <button class="btn outline" type="button" (click)="showCreateYearModal.set(false)">
+                    Cancel
+                </button>
+                <button [disabled]="createYearForm.invalid" class="btn fill" type="button" (click)="createYear($event)">
+                    Submit
+                </button>
+            </div>
+        </form>
+</p-dialog>
