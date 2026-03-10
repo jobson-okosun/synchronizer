@@ -1,0 +1,55 @@
+<div animate.enter="fade-in">
+    <div class="flex flex-col gap-3 sm:flex-row sm:items-center sm:justify-between mb-10">
+        <div>
+            <h1 class="text-2xl font-semibold text-gray-900">Exam year</h1>
+            <p class="mt-1 text-sm text-gray-600">Manage your exam year</p>
+        </div>
+    </div>
+
+    <div class="bg-white p-5 rounded-2xl">
+        <div class="text-gray-600 font-bold mb-5 ">Exam year Records | {{ 12}}</div>
+        <div class="border rounded-xl border-gray-200 overflow-hidden w-full"> 
+            <p-table [value]="years()" [tableStyle]="{ 'min-width': '50rem' }">
+                <ng-template #header>
+                    <tr class="thr">
+                        <th>Name</th>
+                        <th>Start date</th>
+                        <th>End date</th>
+                        <th>Action</th>
+                    </tr>
+                </ng-template>
+                <ng-template #body let-item let-i="rowIndex">
+                    <tr class="tbr">
+                        <td> {{ item.name }} </td>
+                        <td> {{ item.startdate }} </td>
+                        <td> {{ item.enddate }} </td>
+                        <td>
+                            <div class="flex items-center gap-5">
+                                <button (click)="options.toggle($event)">
+                                    <svg class="cursor-pointer" width="24" height="24" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
+                                    <path d="M4.5 10.5C3.675 10.5 3 11.175 3 12C3 12.825 3.675 13.5 4.5 13.5C5.325 13.5 6 12.825 6 12C6 11.175 5.325 10.5 4.5 10.5ZM19.5 10.5C18.675 10.5 18 11.175 18 12C18 12.825 18.675 13.5 19.5 13.5C20.325 13.5 21 12.825 21 12C21 11.175 20.325 10.5 19.5 10.5ZM12 10.5C11.175 10.5 10.5 11.175 10.5 12C10.5 12.825 11.175 13.5 12 13.5C12.825 13.5 13.5 12.825 13.5 12C13.5 11.175 12.825 10.5 12 10.5Z" fill="#292929"/>
+                                    </svg>
+                                </button>
+
+                                <p-popover #options>
+                                    <div class="p-1 flex flex-col gap-4">
+                                        <div (click)="confirmMakeYearCurrent('1')" class="text-gray-500 font-normal text-sm cursor-pointer hover:text-black">Make current</div>
+                                    </div>
+                                </p-popover>
+                            </div>
+                        </td> 
+                    </tr>
+                </ng-template>
+            </p-table>
+        </div>
+        <div  class="flex justify-start text-xs! mt-5">
+            <p-paginator
+                class="px-0! py-1"
+                [rows]="10"
+                [totalRecords]="3"
+                [showCurrentPageReport]="true"
+                [showPageLinks]="true"
+                currentPageReportTemplate="{first} - {last} of {totalRecords}" />
+        </div>
+    </div>
+</div>

@@ -1,0 +1,64 @@
+<div class="flex min-h-dvh items-center justify-center bg-gray-50 px-4 py-10">
+	<div class="w-full max-w-md">
+		<div class="mb-6 text-center">
+			<div class="text-2xl font-semibold tracking-tight text-gray-900">Synchronizer</div>
+			<div class="mt-1 text-sm text-gray-600">Enter your credentials to sign in</div>
+		</div>
+
+		<form
+			class="rounded-2xl border border-gray-200 bg-white p-6 shadow-sm"
+			[formGroup]="form"
+			novalidate
+		>
+			<div class="space-y-4">
+				@if (errorMessage()) {
+					<div class="rounded-xl border border-red-200 bg-red-50 px-3 py-2 text-sm text-red-700">
+						{{ errorMessage() }}
+					</div>
+				}
+
+				<div>
+					<label class="mb-1 block text-sm font-medium text-gray-800" for="email">Email</label>
+					<input
+						id="email"
+						type="email"
+						autocomplete="email"
+						class="h-11 w-full rounded-xl border border-gray-300 bg-white px-3 text-gray-900 outline-none transition focus:border-gray-400 focus:ring-2 focus:ring-gray-200"
+						formControlName="email"
+					/>
+					@if (submitted() && form.controls.email.invalid) {
+						<p class="mt-1 text-xs text-red-600">Enter a valid email address.</p>
+					}
+				</div>
+
+				<div>
+					<label class="mb-1 block text-sm font-medium text-gray-800" for="password">Password</label>
+					<input
+						id="password"
+						type="password"
+						autocomplete="current-password"
+						class="h-11 w-full rounded-xl border border-gray-300 bg-white px-3 text-gray-900 outline-none transition focus:border-gray-400 focus:ring-2 focus:ring-gray-200"
+						formControlName="password"
+					/>
+					@if (submitted() && form.controls.password.invalid) {
+						<p class="mt-1 text-xs text-red-600">Password is required.</p>
+					}
+				</div>
+
+				<button
+                    (click)="submit($event)"
+					type="button"
+					class="btn fill w-full!">
+					Sign in
+				</button>
+			</div>
+
+			<div class="mt-5 flex items-center justify-center text-sm">
+				<!-- <a class="text-gray-700 hover:text-gray-900" routerLink="/auth/signup">Create account</a> -->
+				<!-- <a class="text-gray-700 hover:text-gray-900" routerLink="/auth/mfa">MFA code</a> -->
+			</div>
+		</form>
+
+		<p class="mt-6 text-center text-xs text-gray-500">© 2026 Multilent Softwares</p>
+	</div>
+</div>

@@ -1,0 +1,8 @@
+.router-link-active svg {
+    stroke: #2568a2 !important;
+    stroke-width: 2 !important;
+}
+
+.router-link-active .label {
+    color: #2568a2 !important;
+}

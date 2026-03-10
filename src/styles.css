@@ -1,1 +1,159 @@
 /* You can add global styles to this file, and also import other style files */
+@import "tailwindcss";
+@import "primeicons/primeicons.css";
+
+:host {
+    font-family: "Inter", -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Helvetica, Arial, sans-serif, "Apple Color Emoji", "Segoe UI Emoji", "Segoe UI Symbol";
+    box-sizing: border-box;
+    -webkit-font-smoothing: antialiased;
+    -moz-osx-font-smoothing: grayscale;
+}
+
+@theme {
+    --gray-700: oklch(36.98% 0.014 302.71);
+    --gray-400: oklch(70.9% 0.015 304.04);
+    --color-primary: #2568a2;
+    --color-primary-light: #ebf3ff;
+    --font-inter: Inter, sans-serif
+}
+
+@layer utilities {
+    .no-scrollbar::-webkit-scrollbar {
+        display: none;
+    }
+
+    .no-scrollbar {
+        -ms-overflow-style: none;
+        /* IE and Edge */
+        scrollbar-width: none;
+        /* Firefox */
+    }
+}
+
+
+body {
+    font-family: Roboto;
+    @apply h-dvh w-full p-0 m-0 text-[--gray-700]
+}
+
+.btn {
+    transition: background 0.3s ease;
+    @apply flex items-center justify-center gap-1.5 px-6 py-3 rounded-full border-0 outline-none ring-0 cursor-pointer w-max font-medium text-sm whitespace-nowrap
+}
+
+.btn.btn-sm {
+    transition: background 0.3s ease;
+    @apply px-4! py-2! text-sm!
+}
+
+.btn.soft {
+    background: color-mix(in srgb, var(--color-primary) 5%, transparent);
+    color: var(--color-primary);
+}
+
+.btn.fill {
+    background: var(--color-primary);
+    color: #fff;
+}
+
+.btn.soft:hover {
+    background: color-mix(in srgb, var(--color-primary) 15%, transparent);
+}
+
+.btn.fill:hover {
+    background: color-mix(in srgb, var(--color-primary) 80%, transparent);
+}
+
+.btn.outline {
+    background: white;
+    border: 1px solid #e7e9ec;
+    color: var(--gray-700);
+}
+
+.btn.outline:hover {
+    background: #f9fafb;
+}
+
+input[type="text"],
+input[type="email"],
+input[type="password"],
+input[type="url"],
+select {
+    @apply w-full px-5 py-3 border border-gray-200 rounded-xl bg-gray-50 text-gray-800 outline-none placeholder:text-sm
+}
+
+button {
+    @apply cursor-pointer
+}
+
+button:disabled {
+    @apply opacity-30 cursor-not-allowed
+}
+
+@keyframes fadeIn {
+    from {
+        opacity: 0.3;
+    }
+
+    to {
+        opacity: 1;
+    }
+}
+
+
+.fade-in {
+    animation: fadeIn 300ms ease-in forwards;
+}
+
+table {
+  @apply !text-sm
+}
+
+table th {
+  @apply !text-gray-700
+}
+
+table td {
+  font-size: 13px;
+  @apply !text-gray-500 first-letter:capitalize
+}
+
+table tr.tbr:last-of-type td {
+  @apply !border-b-0
+}
+
+table th {
+  @apply !bg-gray-100/50 !py-6 !border-y !border-dashed border-gray-50
+}
+
+.form .form-container {
+    @apply flex flex-col gap-y-5 w-full
+}
+
+.form-group {
+    @apply flex flex-col gap-2
+}
+
+.form-group label {
+    @apply font-semibold first-letter:capitalize text-xs text-gray-700
+}
+
+.form-control {
+    @apply border p-2.5 rounded-md border-gray-300 w-full outline-none focus:outline-transparent focus:ring-transparent ring-0 focus:border-primary transition duration-200 !text-xs placeholder:!text-xs placeholder:!text-gray-500 placeholder:first-letter:capitalize 
+}
+
+.form-group .p-datepicker input {
+  @apply !border-transparent !ring-0 !text-sm
+}
+
+.form-group .control-error {
+    @apply !text-sm !font-light  !text-red-400 py-0.5 first-letter:uppercase
+}
+
+.form-btn button {
+    @apply outline-none ring-0 focus:ring-transparent focus:outline-transparent p-3 rounded-md text-center bg-primary text-white w-full first-letter:capitalize font-semibold hover:bg-green-800 transition duration-300 cursor-pointer
+} 
+
+.form-control:disabled, button:disabled {
+    @apply opacity-40 cursor-pointer
+}
