@@ -7,9 +7,9 @@
     </div>
 
     <div class="bg-white p-5 rounded-2xl">
-        <div class="text-gray-600 font-bold mb-5 ">Exams Records | {{ 12}}</div>
+        <div class="text-gray-600 font-bold mb-5 ">Exams Records | {{ exams().metadata.total_items }} </div>
         <div class="border rounded-xl border-gray-200 overflow-hidden w-full"> 
-            <p-table [value]="exams()" [tableStyle]="{ 'min-width': '50rem' }">
+            <p-table [value]="exams().items" [tableStyle]="{ 'min-width': '50rem' }">
                 <ng-template #header>
                     <tr class="thr">
                         <th>Name</th>
@@ -17,6 +17,7 @@
                         <th>End date</th>
                         <th>Status</th>
                         <th>Biometric</th>
+                        <th>Passport</th>
                         <th>Type</th>
                         <th>Action</th>
                     </tr>
@@ -24,11 +25,12 @@
                 <ng-template #body let-item let-i="rowIndex">
                     <tr class="tbr">
                         <td> {{ item.name }} </td>
-                        <td> {{ item.startdate }} </td>
-                        <td> {{ item.enddate }} </td>
+                        <td> {{ item.start_date | date: 'medium' }} </td>
+                        <td> {{ item.end_date | date: 'medium' }} </td>
                         <td> {{ item.status }} </td>
-                        <td> {{ item.biometric ? 'Yes' : 'No' }} </td>
-                        <td> {{ item.type }} </td>
+                        <td> {{ item.verification_method == 'WITH_BVM' ? 'YES' : 'NO' }} </td>
+                        <td> {{ item.has_passport ? 'YES' : 'NO' }} </td>
+                        <td> {{ item.exam_type }} </td>
                         <td>
                             <div class="flex items-center gap-5">
                                 <button (click)="options.toggle($event)">
@@ -39,23 +41,48 @@
 
                                 <p-popover #options>
                                     <div class="p-1 flex flex-col gap-4">
-                                        <a routerLink="1" class="text-gray-500 font-normal text-sm cursor-pointer hover:text-black">View participants</a>
+                                        <a routerLink="{{ item.id  }}" class="text-gray-500 font-normal text-sm cursor-pointer hover:text-black">View Participants</a>
                                     </div>
                                 </p-popover>
                             </div>
                         </td> 
                     </tr>
                 </ng-template>
+                <ng-template #emptymessage>
+                    <tr>
+                        <td colspan="8">
+                            @if(examsReq.isLoading()) {
+                                <div class="flex items-center justify-center  p-10">
+                                    <div class="w-8 h-8 border-4 border-gray-300 border-t-transparent rounded-full animate-spin"></div>
+                                </div>
+                            }
+                            @if(!examsReq.isLoading()) {
+                                <div class="text-gray-600 flex flex-col items-center justify-center gap-3 py-6">
+                                    <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" width="64" height="64" color="#bcbfc3" fill="none">
+                                        <path d="M3 16L7.46967 11.5303C7.80923 11.1908 8.26978 11 8.75 11C9.23022 11 9.69077 11.1908 10.0303 11.5303L14 15.5M15.5 17L14 15.5M21 16L18.5303 13.5303C18.1908 13.1908 17.7302 13 17.25 13C16.7698 13 16.3092 13.1908 15.9697 13.5303L14 15.5" stroke="#bcbfc3" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"></path>
+                                        <path d="M15.5 8C15.7761 8 16 7.77614 16 7.5C16 7.22386 15.7761 7 15.5 7M15.5 8C15.2239 8 15 7.77614 15 7.5C15 7.22386 15.2239 7 15.5 7M15.5 8V7" stroke="#bcbfc3" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"></path>
+                                        <path d="M3.69797 19.7472C2.5 18.3446 2.5 16.2297 2.5 12C2.5 7.77027 2.5 5.6554 3.69797 4.25276C3.86808 4.05358 4.05358 3.86808 4.25276 3.69797C5.6554 2.5 7.77027 2.5 12 2.5C16.2297 2.5 18.3446 2.5 19.7472 3.69797C19.9464 3.86808 20.1319 4.05358 20.302 4.25276C21.5 5.6554 21.5 7.77027 21.5 12C21.5 16.2297 21.5 18.3446 20.302 19.7472C20.1319 19.9464 19.9464 20.1319 19.7472 20.302C18.3446 21.5 16.2297 21.5 12 21.5C7.77027 21.5 5.6554 21.5 4.25276 20.302C4.05358 20.1319 3.86808 19.9464 3.69797 19.7472Z" stroke="#bcbfc3" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"></path>
+                                    </svg>
+                                    <span>You have no data yet</span>
+                                </div>
+                            }
+                        </td>
+                    </tr>
+                </ng-template>
             </p-table>
         </div>
         <div  class="flex justify-start text-xs! mt-5">
             <p-paginator
+                [class.hidden!]="!exams().items.length"
                 class="px-0! py-1"
-                [rows]="10"
-                [totalRecords]="3"
+                [first]="0" 
+                [rows]="size()" 
+                [totalRecords]="exams() && exams().metadata.total_items" 
+                [pageLinkSize]="10"
+                [rowsPerPageOptions]="[20, 30, 50, 100]" 
+                (onPageChange)="onPageChange($event)"
                 [showCurrentPageReport]="true"
-                [showPageLinks]="true"
-                currentPageReportTemplate="{first} - {last} of {totalRecords}" />
+                currentPageReportTemplate="Showing {first} to {last} of {totalRecords} exams" />
         </div>
     </div>
 </div>

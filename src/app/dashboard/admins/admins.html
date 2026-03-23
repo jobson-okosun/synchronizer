@@ -1,63 +1,54 @@
 <div animate.enter="fade-in">
     <div class="flex flex-col gap-3 sm:flex-row sm:items-center sm:justify-between mb-10">
         <div>
-            <h1 class="text-2xl font-semibold text-gray-900">Centers</h1>
-            <p class="mt-1 text-sm text-gray-600">View a center from the following exams</p>
+            <h1 class="text-2xl font-semibold text-gray-900">Organization Admins</h1>
+            <p class="mt-1 text-sm text-gray-600">Record of center admins</p>
+        </div>
+        <div class="flex gap-3 lg:justify-end mb-5">
+            <button (click)="uploadOrgAdmin($event)" class="btn fill gap-2">
+                Upload admins
+            </button>
+            <button (click)="downloadAdmins($event)" class="btn outline gap-2">
+               <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" width="20" height="20" color="#4a4a4a" fill="none" stroke="#141B34" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round">
+                    <path d="M4 7C4.58984 7.60684 6.15973 10 7 10C7.84027 10 9.41016 7.60684 10 7M7 9L7 2" />
+                    <path d="M4 13L4 14.5442C4 17.7892 4 19.4117 4.88607 20.5107C5.06508 20.7327 5.26731 20.9349 5.48933 21.1139C6.58831 22 8.21082 22 11.4558 22C12.1614 22 12.5141 22 12.8372 21.886C12.9044 21.8623 12.9702 21.835 13.0345 21.8043C13.3436 21.6564 13.593 21.407 14.0919 20.9081L18.8284 16.1716C19.4065 15.5935 19.6955 15.3045 19.8478 14.9369C20 14.5694 20 14.1606 20 13.3431V10C20 6.22876 20 4.34315 18.8284 3.17157C17.6569 2 15.7712 2 12 2M13 21.5V21C13 18.1716 13 16.7574 13.8787 15.8787C14.7574 15 16.1716 15 19 15H19.5" />
+                </svg>
+                Download admins
+            </button>
         </div>
     </div>
 
     <div class="bg-white p-5 rounded-2xl">
-        <div class="text-gray-600 font-bold mb-5 ">Exams Records | {{  exams().metadata.total_items }} </div>
+        <div class="text-gray-600 font-bold mb-5 ">Admins Records | {{  admins().data.metadata.total_items }} </div>
         <div class="border rounded-xl border-gray-200 overflow-hidden w-full"> 
-            <p-table [value]="exams().items" [tableStyle]="{ 'min-width': '50rem' }">
+            <p-table [value]="admins().data.items" [tableStyle]="{ 'min-width': '50rem' }">
                 <ng-template #header>
                     <tr class="thr">
-                        <th>Name</th>
-                        <th>Start date</th>
-                        <th>End date</th>
-                        <th>Status</th>
-                        <th>Biometric</th>
-                        <th>Passport</th>
-                        <th>Type</th>
-                        <th>Action</th>
+                        <th>First name</th>
+                        <th>Last name</th>
+                        <th>Username</th>
+                        <th>Email</th>
+                        <th>Password</th>
                     </tr>
                 </ng-template>
                 <ng-template #body let-item let-i="rowIndex">
                     <tr class="tbr">
-                        <td> {{ item.name }} </td>
-                        <td> {{ item.start_date | date: 'medium' }} </td>
-                        <td> {{ item.end_date | date: 'medium' }} </td>
-                        <td> {{ item.status }} </td>
-                        <td> {{ item.verification_method == 'WITH_BVM' ? 'YES' : 'NO' }} </td>
-                        <td> {{ item.has_passport ? 'YES' : 'NO' }} </td>
-                        <td> {{ item.exam_type }} </td>
-                        <td>
-                            <div class="flex items-center gap-5">
-                                <button (click)="options.toggle($event)">
-                                    <svg class="cursor-pointer" width="24" height="24" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
-                                    <path d="M4.5 10.5C3.675 10.5 3 11.175 3 12C3 12.825 3.675 13.5 4.5 13.5C5.325 13.5 6 12.825 6 12C6 11.175 5.325 10.5 4.5 10.5ZM19.5 10.5C18.675 10.5 18 11.175 18 12C18 12.825 18.675 13.5 19.5 13.5C20.325 13.5 21 12.825 21 12C21 11.175 20.325 10.5 19.5 10.5ZM12 10.5C11.175 10.5 10.5 11.175 10.5 12C10.5 12.825 11.175 13.5 12 13.5C12.825 13.5 13.5 12.825 13.5 12C13.5 11.175 12.825 10.5 12 10.5Z" fill="#292929"/>
-                                    </svg>
-                                </button>
-
-                                <p-popover #options>
-                                    <div class="p-1 flex flex-col gap-4">
-                                        <a routerLink="{{ item.id  }}" class="text-gray-500 font-normal text-sm cursor-pointer hover:text-black">View Centers</a>
-                                        <a routerLink="../participant/{{ item.id  }}" class="text-gray-500 font-normal text-sm cursor-pointer hover:text-black">View Participants</a>
-                                    </div>
-                                </p-popover>
-                            </div>
-                        </td> 
+                        <td> {{ item.first_name }} </td>
+                        <td> {{ item.last_name }} </td>
+                        <td> {{ item.username }} </td>
+                        <td> {{ item.email }} </td>
+                        <td> {{ item.password }} </td>
                     </tr>
                 </ng-template>
                 <ng-template #emptymessage>
                     <tr>
                         <td colspan="8">
-                            @if(examsReq.isLoading()) {
+                            @if(adminsReq.isLoading()) {
                                 <div class="flex items-center justify-center  p-10">
                                     <div class="w-8 h-8 border-4 border-gray-300 border-t-transparent rounded-full animate-spin"></div>
                                 </div>
                             }
-                            @if(!examsReq.isLoading()) {
+                            @if(!adminsReq.isLoading()) {
                                 <div class="text-gray-600 flex flex-col items-center justify-center gap-3 py-6">
                                     <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" width="64" height="64" color="#bcbfc3" fill="none">
                                         <path d="M3 16L7.46967 11.5303C7.80923 11.1908 8.26978 11 8.75 11C9.23022 11 9.69077 11.1908 10.0303 11.5303L14 15.5M15.5 17L14 15.5M21 16L18.5303 13.5303C18.1908 13.1908 17.7302 13 17.25 13C16.7698 13 16.3092 13.1908 15.9697 13.5303L14 15.5" stroke="#bcbfc3" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"></path>
@@ -74,16 +65,16 @@
         </div>
         <div  class="flex justify-start text-xs! mt-5">
             <p-paginator
-                [class.hidden!]="!exams().items.length"
+                [class.hidden!]="!admins().data.items.length"
                 class="px-0! py-1"
                 [first]="0" 
                 [rows]="size()" 
-                [totalRecords]="exams() && exams().metadata.total_items" 
+                [totalRecords]="admins() && admins().data.metadata.total_items" 
                 [pageLinkSize]="10"
                 [rowsPerPageOptions]="[20, 30, 50, 100]" 
                 (onPageChange)="onPageChange($event)"
                 [showCurrentPageReport]="true"
-                currentPageReportTemplate="Showing {first} to {last} of {totalRecords} exams" />
+                currentPageReportTemplate="Showing {first} to {last} of {totalRecords}" />
         </div>
     </div>
 </div>

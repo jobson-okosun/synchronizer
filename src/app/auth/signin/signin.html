@@ -15,36 +15,24 @@
 				}
 
 				<div>
-					<label class="mb-1 block text-sm font-medium text-gray-800" for="email">Email</label>
-					<input
-						id="email"
-						type="email"
-						autocomplete="email"
-						class="h-11 w-full rounded-xl border border-gray-300 bg-white px-3 text-gray-900 outline-none transition focus:border-gray-400 focus:ring-2 focus:ring-gray-200"
-						formControlName="email"
-					/>
-					@if (submitted() && form.controls.email.invalid) {
+					<label class="mb-1 block text-sm font-medium text-gray-800" for="email">Email or Username</label>
+					<input type="text" class="h-11 w-full rounded-xl border border-gray-300 bg-white px-3 text-gray-900 outline-none transition focus:border-gray-400 focus:ring-2 focus:ring-gray-200" formControlName="user"/>
+
+					@if (form.controls.user.touched&& form.controls.user.invalid) {
 						<p class="mt-1 text-xs text-red-600">Enter a valid email address.</p>
 					}
 				</div>
 
 				<div>
 					<label class="mb-1 block text-sm font-medium text-gray-800" for="password">Password</label>
-					<input
-						id="password"
-						type="password"
-						autocomplete="current-password"
-						class="h-11 w-full rounded-xl border border-gray-300 bg-white px-3 text-gray-900 outline-none transition focus:border-gray-400 focus:ring-2 focus:ring-gray-200"
-						formControlName="password"
-					/>
-					@if (submitted() && form.controls.password.invalid) {
+					<input type="password" class="h-11 w-full rounded-xl border border-gray-300 bg-white px-3 text-gray-900 outline-none transition focus:border-gray-400 focus:ring-2 focus:ring-gray-200" formControlName="password"/>
+
+					@if (form.controls.password.touched && form.controls.password.invalid) {
 						<p class="mt-1 text-xs text-red-600">Password is required.</p>
 					}
 				</div>
 
-				<button [disabled]="form.invalid" (click)="submit($event)" type="button" class="btn fill w-full!">
-					Sign in
-				</button>
+				<button [disabled]="form.invalid" (click)="submit($event)" type="button" class="btn fill w-full!">Sign in</button>
 			</div>
 
 			<div class="mt-5 flex items-center justify-center text-sm">
@@ -53,6 +41,6 @@
 			</div>
 		</form>
 
-		<p class="mt-6 text-center text-xs text-gray-500">© 2026 Multilent Softwares</p>
+		<p class="mt-6 text-center text-xs text-gray-500">© {{ year }} Multilent Softwares</p>
 	</div>
 </div>

@@ -1,4 +1,4 @@
 export const environment = {
     production: true,
-    apiUrl: 'https://updater.multilentjmb.com:10200',
+    apiUrl: 'https://ea-converter.ngrok.app/api/v1',
 };

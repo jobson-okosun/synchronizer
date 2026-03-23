@@ -1,0 +1,110 @@
+@if(examReq.isLoading()) {
+    <div class="flex items-center justify-center  p-10">
+        <div class="w-8 h-8 border-4 border-gray-300 border-t-transparent rounded-full animate-spin"></div>
+    </div>
+} @else {
+    @if(!exam()) {
+        <div class="text-gray-600 flex flex-col items-center justify-center gap-3 py-6">
+            <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" width="64" height="64" color="#bcbfc3" fill="none">
+                <path d="M3 16L7.46967 11.5303C7.80923 11.1908 8.26978 11 8.75 11C9.23022 11 9.69077 11.1908 10.0303 11.5303L14 15.5M15.5 17L14 15.5M21 16L18.5303 13.5303C18.1908 13.1908 17.7302 13 17.25 13C16.7698 13 16.3092 13.1908 15.9697 13.5303L14 15.5" stroke="#bcbfc3" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"></path>
+                <path d="M15.5 8C15.7761 8 16 7.77614 16 7.5C16 7.22386 15.7761 7 15.5 7M15.5 8C15.2239 8 15 7.77614 15 7.5C15 7.22386 15.2239 7 15.5 7M15.5 8V7" stroke="#bcbfc3" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"></path>
+                <path d="M3.69797 19.7472C2.5 18.3446 2.5 16.2297 2.5 12C2.5 7.77027 2.5 5.6554 3.69797 4.25276C3.86808 4.05358 4.05358 3.86808 4.25276 3.69797C5.6554 2.5 7.77027 2.5 12 2.5C16.2297 2.5 18.3446 2.5 19.7472 3.69797C19.9464 3.86808 20.1319 4.05358 20.302 4.25276C21.5 5.6554 21.5 7.77027 21.5 12C21.5 16.2297 21.5 18.3446 20.302 19.7472C20.1319 19.9464 19.9464 20.1319 19.7472 20.302C18.3446 21.5 16.2297 21.5 12 21.5C7.77027 21.5 5.6554 21.5 4.25276 20.302C4.05358 20.1319 3.86808 19.9464 3.69797 19.7472Z" stroke="#bcbfc3" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"></path>
+            </svg>
+            <span>You have no data yet</span>
+        </div>
+    }
+}
+
+@if(exam()) {
+    <div animate.enter="fade-in">
+        <div class="flex flex-col gap-3 sm:flex-row sm:items-center sm:justify-between mb-10">
+            <div>
+                <h1 class="text-2xl font-semibold text-gray-900">{{ exam()?.name }}</h1>
+                <p class="mt-1 text-sm text-gray-600">Information about this exam.</p>
+            </div>
+        </div>
+
+        <div class="bg-white p-6 rounded-2xl">
+            <div class="pb-5">
+                <h2 class="text-base font-semibold">Exam information</h2>
+                <p class="text-sm text-gray-500">Key details at a glance</p>
+            </div>
+            
+            <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6 mt-5 bg-gray-100 p-6 rounded-2xl">
+
+                <div class="p-5 bg-white rounded-2xl">
+                    <div class="text-xs text-gray-400 uppercase tracking-wide">Exam name</div>
+                    <div class="text-base font-medium text-gray-900 mt-1">{{ exam()?.name }}</div>
+                </div>
+
+                <div class="p-5 bg-white rounded-2xl">
+                    <div class="text-xs text-gray-400 uppercase tracking-wide">Description</div>
+                    <div class="text-base font-medium text-gray-900 mt-1"></div>
+                </div>
+
+                <div class="p-5 bg-white rounded-2xl">
+                    <div class="text-xs text-gray-400 uppercase tracking-wide">Exam type</div>
+                    <div class="text-base font-medium text-gray-900 mt-1">{{ exam()?.exam_type }}</div>
+                </div>
+
+                <div class="p-5 bg-white rounded-2xl">
+                    <div class="text-xs text-gray-400 uppercase tracking-wide">Biometric</div>
+                    <div class="text-base font-medium text-gray-900 mt-1">{{ exam()?.verification_method == 'WITH_BVM' ? 'YES' : 'NO' }}</div>
+                </div>
+
+                <div class="p-5 bg-white rounded-2xl">
+                    <div class="text-xs text-gray-400 uppercase tracking-wide">Passport</div>
+                    <div class="text-base font-medium text-gray-900 mt-1">{{ exam()?.has_passport ? 'YES' : 'NO' }} </div>
+                </div>
+
+                <div class="p-5 bg-white rounded-2xl">
+                    <div class="text-xs text-gray-400 uppercase tracking-wide">Delivery method</div>
+                    <div class="text-base font-medium text-gray-900 mt-1"> {{ exam()?.delivery_method?.replaceAll('_', ' ') }}</div>
+                </div>
+
+                <div class="p-5 bg-white rounded-2xl">
+                    <div class="text-xs text-gray-400 uppercase tracking-wide">Duration</div>
+                    <div class="text-base font-medium text-gray-900 mt-1">{{ exam()?.duration }} Mins</div>
+                </div>
+
+                <div class="p-5 bg-white rounded-2xl">
+                    <div class="text-xs text-gray-400 uppercase tracking-wide">Status</div>
+                    <div class="text-base font-medium text-gray-900 mt-1">
+                    {{ exam()?.status }}
+                    </div>
+                </div>
+
+                <div class="p-5 bg-white rounded-2xl">
+                    <div class="text-xs text-gray-400 uppercase tracking-wide">Start date</div>
+                    <div class="text-base font-medium text-gray-900 mt-1">{{ exam()?.start_date | date: 'medium' }}</div>
+                </div>
+
+                <div class="p-5 bg-white rounded-2xl">
+                    <div class="text-xs text-gray-400 uppercase tracking-wide">End date</div>
+                    <div class="text-base font-medium text-gray-900 mt-1">{{ exam()?.end_date | date: 'medium' }}</div>
+                </div>
+
+                <div class="p-5 bg-white rounded-2xl">
+                    <div class="text-xs text-gray-400 uppercase tracking-wide">Total questions</div>
+                    <div class="text-base font-medium text-gray-900 mt-1"></div>
+                </div>
+
+                <div class="p-5 bg-white rounded-2xl">
+                    <div class="text-xs text-gray-400 uppercase tracking-wide">Total participants</div>
+                    <div class="text-base font-medium text-gray-900 mt-1"></div>
+                </div>
+
+                <div class="p-5 bg-white rounded-2xl">
+                    <div class="text-xs text-gray-400 uppercase tracking-wide">Total centers</div>
+                    <div class="text-base font-medium text-gray-900 mt-1"></div>
+                </div>
+
+                <div class="p-5 bg-white rounded-2xl">
+                    <div class="text-xs text-gray-400 uppercase tracking-wide">Synchronized</div>
+                    <div class="text-base font-medium text-gray-900 mt-1"></div>
+                </div>
+
+            </div>
+        </div>
+    </div>
+}

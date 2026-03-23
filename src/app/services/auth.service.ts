@@ -2,16 +2,17 @@ import { inject, Injectable, signal } from '@angular/core';
 import { HttpClient } from '@angular/common/http';
 import { finalize, tap } from 'rxjs/operators';
 import { Observable } from 'rxjs';
-import type { AuthRequest, AuthResponse } from '../models/updater.models';
 import { environment } from '../../environments/environment';
+import { LoginPayload, LoginResponse, NewUserPayload, ReqResponse } from '../models/types';
 
 
 @Injectable({ providedIn: 'root' })
 export class AuthService {
     private _http = inject(HttpClient);
-    readonly authData = signal<AuthResponse | null>(null);
     private _domain = environment.apiUrl
 
+    readonly authData = signal<LoginResponse | null>(null);
+	
 	constructor() {
 		this.restoreSession();
 	}
@@ -24,9 +25,8 @@ export class AuthService {
 		}
 
 		try {
-			const parsed = JSON.parse(raw) as AuthResponse;
-			// Minimal shape check
-			if (!parsed?.access_token || !parsed?.refresh_token || !parsed?.id) {
+			const parsed = JSON.parse(raw) as LoginResponse;
+			if (!parsed?.id || !parsed?.first_name) {
 				throw new Error('Invalid auth payload');
 			}
 			this.authData.set(parsed);
@@ -36,8 +36,12 @@ export class AuthService {
 		}
 	}
 
-	login(payload: AuthRequest): Observable<AuthResponse> {
-		return this._http.post<AuthResponse>(`${this._domain}/api/updater/auth`, payload).pipe(
+	signup(payload: NewUserPayload): Observable<ReqResponse> {
+		return this._http.post<ReqResponse>(`${this._domain}/users/register`, payload)
+	}
+
+	login(payload: LoginPayload): Observable<LoginResponse> {
+		return this._http.post<LoginResponse>(`${this._domain}/auth/login`, payload).pipe(
 			tap((res) => {
 				localStorage.setItem('AUTH', JSON.stringify(res));
                 this.authData.set(res);

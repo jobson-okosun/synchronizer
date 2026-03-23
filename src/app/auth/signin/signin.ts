@@ -18,28 +18,24 @@ export default class Signin {
   private router = inject(Router);
   private _toast = inject(HotToastService);
 
-  submitted = signal(false);
+  year = new Date().getFullYear()
   errorMessage = signal<string | null>(null);
 
   form = this.fb.group({
-    email: this.fb.control('', { validators: [Validators.required, Validators.email] }),
+    user: this.fb.control('', { validators: [Validators.required] }),
     password: this.fb.control('', {
       validators: [Validators.required],
     }),
   });
 
   submit(event: Event): void {
-    void this.router.navigateByUrl('/app');
-    const btn = event.target as HTMLButtonElement;
-    btn.disabled = true;
-
-    this.submitted.set(true);
-    this.errorMessage.set(null);
-
     if (this.form.invalid) {
-      btn.disabled = false;
+      this.form.markAllAsTouched()
       return;
     }
+    
+    const btn = event.target as HTMLButtonElement;
+    btn.disabled = true;
 
     this.auth
       .login(this.form.getRawValue())

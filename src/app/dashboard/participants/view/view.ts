@@ -1,15 +1,17 @@
 import { HttpErrorResponse } from '@angular/common/http';
-import { Component, computed, inject, signal } from '@angular/core';
+import { Component, computed, effect, inject, input, signal } from '@angular/core';
 import { HotToastService } from '@ngxpert/hot-toast';
 import { DialogModule } from 'primeng/dialog';
-import { PaginatorModule } from 'primeng/paginator';
+import { PaginatorModule, PaginatorState } from 'primeng/paginator';
 import { TableModule } from 'primeng/table';
 import { finalize } from 'rxjs';
 import DataService from '../../../services/data';
+import { Metadata } from '../../../models/types';
+import { FormGroup, FormControl, Validators, ReactiveFormsModule } from '@angular/forms';
 
 @Component({
   selector: 'app-view',
-  imports: [TableModule, PaginatorModule, DialogModule],
+  imports: [TableModule, PaginatorModule, DialogModule, ReactiveFormsModule],
   templateUrl: './view.html',
   styleUrl: './view.css',
 })
@@ -20,38 +22,84 @@ export default class View {
   selectedFile = signal<any | File>(null)
   isLoading = signal(false)
   showUploadAttachmentDialog: boolean = false
-  centers = computed(() => [
-    { name: '2025 june exam',  no: 5, subjects: 'ENG,PHY', gender:'Male', phone: '070345433', email: 'joedow@email.com' },
-    { name: '2025 june exam',  no: 5, subjects: 'ENG,PHY', gender:'Male', phone: '070345433', email: 'joedow@email.com' },
-    { name: '2025 june exam',  no: 5, subjects: 'ENG,PHY', gender:'Male', phone: '070345433', email: 'joedow@email.com' },
-    { name: '2025 june exam',  no: 5, subjects: 'ENG,PHY', gender:'Male', phone: '070345433', email: 'joedow@email.com' },
-  ])
+  showPushDialog: boolean = false;
 
-  ImportCenters() {
+  examId = input<string | undefined>();
+
+  participantsStatsReq = this._dataService.fetchExamParticipantsStats(this.examId)
+  participantsStats = computed(() => this.participantsStatsReq.hasValue() ? this.participantsStatsReq.value() : null)
+  selectedSession = computed(() => this._dataService.selectedSession())
+
+  size = signal(200)
+  page = signal(1)
+  participantsReq = this._dataService.fetchParticipants(this.size, this.page, this.examId)
+  participants = computed(() => this.participantsReq.hasValue() ? this.participantsReq.value() : ({ exam_id: '', exam_name: '',  participants: { items: [], metadata: new Metadata() }}))
+
+  reloadPage = effect(() => {
+    if (this.selectedSession()) {
+      this.participantsStatsReq.reload()
+      this.participantsReq.reload()
+    }
+  })
+
+  pushForm = new FormGroup({
+    ipAddress: new FormControl('', [Validators.required, Validators.pattern(/^(25[0-5]|2[0-4]\d|1\d\d|[1-9]?\d)(\.(25[0-5]|2[0-4]\d|1\d\d|[1-9]?\d)){3}$/)]),
+    protocol: new FormControl(null, Validators.required)
+  });
+
+  pushToExamAlpha(event: Event) {
+    if (this.pushForm.invalid) {
+      this.pushForm.markAllAsTouched();
+      return;
+    }
+
+    const btn = event.target as HTMLButtonElement
+    btn.disabled = true
+
+    const payload = { ...this.pushForm.getRawValue() } as any
+
+    this._dataService.pushParticipantToExamAlpha(payload, this.examId()!)
+      .pipe(finalize(() => btn.disabled = false))
+      .subscribe({
+        next: (res: any) => {
+          this._toast.success(res.message ?? 'Participants uploaded successfully!');
+          this.showPushDialog = false;
+          this.selectedFile.set(null);
+          this.participantsReq.reload()
+        },
+        error: (err: HttpErrorResponse) => {
+          const message = err.error?.message ?? 'Sorry! Unable to complete task';
+          this._toast.error(message);
+        }
+      });
+  }
+
+  ImportParticipants(event: Event) {
     if (!this.selectedFile()) {
       this._toast.error('Please select a file to upload');
       return;
     }
 
+    const btn = event.target as HTMLButtonElement
+    btn.disabled = true
+
     const formData = new FormData();
     formData.append('file', this.selectedFile());
 
-    this.isLoading.set(true);
-
-    // this._dataService.importCenters(formData)
-    //   .pipe(finalize(() => this.isLoading.set(false)))
-    //   .subscribe({
-    //     next: (res: any) => {
-    //       this._toast.success('Centers uploaded successfully!');
-    //       this.showUploadAttachmentDialog = false;
-    //       this.selectedFile.set(null);
-    //       this.centers.reload()
-    //     },
-    //     error: (err: HttpErrorResponse) => {
-    //       const message = err.error?.error ?? 'Unable to upload file';
-    //       this._toast.error(message);
-    //     }
-    //   });
+    this._dataService.importParticipants(formData)
+      .pipe(finalize(() => btn.disabled = false))
+      .subscribe({
+        next: (res: any) => {
+          this._toast.success('Participants uploaded successfully!');
+          this.showUploadAttachmentDialog = false;
+          this.selectedFile.set(null);
+          this.participantsReq.reload()
+        },
+        error: (err: HttpErrorResponse) => {
+          const message = err.error?.message ?? 'Sorry! Unable to complete task';
+          this._toast.error(message);
+        }
+      });
   }
 
 
@@ -96,5 +144,10 @@ export default class View {
   resetFile(inputEl: HTMLInputElement) {
     inputEl.value = ''
     this.selectedFile.set(null)
+  }
+
+  onPageChange(event: PaginatorState) {
+    this.size = this.size
+    this.page.set((event.page ?? 0) + 1)
   }
 }

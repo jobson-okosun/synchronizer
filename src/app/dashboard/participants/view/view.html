@@ -1,7 +1,7 @@
 <div animate.enter="fade-in">
     <div class="flex flex-col gap-3 sm:flex-row sm:items-center sm:justify-between mb-10">
         <div>
-            <h1 class="text-2xl font-semibold text-gray-900">June 12 exams - Participants</h1>
+            <h1 class="text-2xl font-semibold text-gray-900">{{ participants().exam_name }} - Participants</h1>
             <p class="mt-1 text-sm text-gray-600">Manage exam participants</p>
         </div>
         <div class="flex gap-3 lg:justify-end mb-5">
@@ -9,7 +9,7 @@
                 <i class="pi pi-plus"></i>
                 Import Participants
             </button>
-            <button class="btn fill bg-gray-700! gap-2">
+            <button (click)="showPushDialog = !showPushDialog" class="btn fill bg-gray-700! gap-2">
                 Push to examalpha
             </button>
             <button class="btn outline  gap-2">
@@ -25,52 +25,81 @@
     <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4 mb-6">
         <div class="bg-white rounded-xl p-6 border border-gray-200">
             <div class="text-sm text-gray-500 mb-1">Total participants</div>
-            <div class="text-3xl font-bold text-gray-900">0</div>
+            <div class="text-3xl font-bold text-gray-900">{{ participantsStats()?.total_participants ?? 0 }}</div>
         </div>
         <div class="bg-white rounded-xl p-6 border border-gray-200">
-            <div class="text-sm text-gray-500 mb-1">Total Pushed</div>
-            <div class="text-3xl font-bold text-gray-900">0</div>
+            <div class="text-sm text-gray-500 mb-1">Pushed participants</div>
+            <div class="text-3xl font-bold text-gray-900">{{ participantsStats()?.pushed_participants ?? 0 }}</div>
         </div>
         <div class="bg-white rounded-xl p-6 border border-gray-200">
             <div class="text-sm text-gray-500 mb-1">Passport Synched</div>
-            <div class="text-3xl font-bold text-gray-900">0</div>
+            <div class="text-3xl font-bold text-gray-900">{{ participantsStats()?.passport_pushed ?? 0 }}</div>
         </div>
     </div>
 
     <div class="bg-white p-5 rounded-2xl">
-        <div class="text-gray-600 font-bold mb-5 ">Participants Records | {{ 12}}</div>
+        <div class="text-gray-600 font-bold mb-5 ">Participants Records | {{ participants().participants.metadata.total_items }}</div>
         <div class="border rounded-xl border-gray-200 overflow-hidden w-full"> 
-            <p-table [value]="centers()" [tableStyle]="{ 'min-width': '50rem' }">
+            <p-table [value]="participants().participants.items" [tableStyle]="{ 'min-width': '50rem' }">
                 <ng-template #header>
                     <tr class="thr">
                         <th>Name</th>
-                        <th>Exam no</th>
+                        <th>Exam login field</th>
                         <th>Subjects</th>
-                        <th>Sex</th>
+                        <th>Center</th>
                         <th>Phone no</th>
                         <th>Email address</th>
+                        <th>Pushed</th>
+                        <th>Passport pushed</th>
                     </tr>
                 </ng-template>
                 <ng-template #body let-item let-i="rowIndex">
                     <tr class="tbr">
                         <td> {{ item.name }} </td>
-                        <td> {{ item.no }} </td>
+                        <td> {{ item.exam_number }} </td>
                         <td> {{ item.subjects }} </td>
-                        <td> {{ item.gender }} </td>
+                        <td> {{ item.centre_id }} </td>
                         <td> {{ item.phone }} </td>
                         <td> {{ item.email }} </td>
+                        <td> {{ item.pushed ? 'YES' : 'NO' }} </td>
+                        <td> {{ item.passport_pushed ? 'YES' : 'NO' }} </td>
+                    </tr>
+                </ng-template>
+                <ng-template #emptymessage>
+                    <tr>
+                        <td colspan="9">
+                            @if(participantsReq.isLoading()) {
+                                <div class="flex items-center justify-center  p-10">
+                                    <div class="w-8 h-8 border-4 border-gray-300 border-t-transparent rounded-full animate-spin"></div>
+                                </div>
+                            }
+                            @if(!participantsReq.isLoading()) {
+                                <div class="text-gray-600 flex flex-col items-center justify-center gap-3 py-6">
+                                    <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" width="64" height="64" color="#bcbfc3" fill="none">
+                                        <path d="M3 16L7.46967 11.5303C7.80923 11.1908 8.26978 11 8.75 11C9.23022 11 9.69077 11.1908 10.0303 11.5303L14 15.5M15.5 17L14 15.5M21 16L18.5303 13.5303C18.1908 13.1908 17.7302 13 17.25 13C16.7698 13 16.3092 13.1908 15.9697 13.5303L14 15.5" stroke="#bcbfc3" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"></path>
+                                        <path d="M15.5 8C15.7761 8 16 7.77614 16 7.5C16 7.22386 15.7761 7 15.5 7M15.5 8C15.2239 8 15 7.77614 15 7.5C15 7.22386 15.2239 7 15.5 7M15.5 8V7" stroke="#bcbfc3" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"></path>
+                                        <path d="M3.69797 19.7472C2.5 18.3446 2.5 16.2297 2.5 12C2.5 7.77027 2.5 5.6554 3.69797 4.25276C3.86808 4.05358 4.05358 3.86808 4.25276 3.69797C5.6554 2.5 7.77027 2.5 12 2.5C16.2297 2.5 18.3446 2.5 19.7472 3.69797C19.9464 3.86808 20.1319 4.05358 20.302 4.25276C21.5 5.6554 21.5 7.77027 21.5 12C21.5 16.2297 21.5 18.3446 20.302 19.7472C20.1319 19.9464 19.9464 20.1319 19.7472 20.302C18.3446 21.5 16.2297 21.5 12 21.5C7.77027 21.5 5.6554 21.5 4.25276 20.302C4.05358 20.1319 3.86808 19.9464 3.69797 19.7472Z" stroke="#bcbfc3" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"></path>
+                                    </svg>
+                                    <span>You have no data yet</span>
+                                </div>
+                            }
+                        </td>
                     </tr>
                 </ng-template>
             </p-table>
         </div>
         <div  class="flex justify-start text-xs! mt-5">
             <p-paginator
+                [class.hidden!]="!participants().participants.items.length"
                 class="px-0! py-1"
-                [rows]="10"
-                [totalRecords]="3"
+                [first]="0" 
+                [rows]="size()" 
+                [totalRecords]="participants() && participants().participants.metadata.total_items" 
+                [pageLinkSize]="10"
+                [rowsPerPageOptions]="[100, 150, 200, 300]" 
+                (onPageChange)="onPageChange($event)"
                 [showCurrentPageReport]="true"
-                [showPageLinks]="true"
-                currentPageReportTemplate="{first} - {last} of {totalRecords}" />
+                currentPageReportTemplate="Showing {first} to {last} of {totalRecords} exams" />
         </div>
     </div>
 </div>
@@ -88,8 +117,69 @@
                 <input (change)="onFileSelected($event)" #file type="file" class="form-control mx-auto w-max! border-0! file:bg-primary-light file:rounded-2xl file:border-transparent! file:outline-none! file:p-3 file:text-xs">
             </div>
             <div class="flex items-center justify-between gap-3 mt-3 col-span-full">
-                <button type="button" (click)="ImportCenters()" class="btn fill flex-1">Import</button>
+                <button type="button" (click)="ImportParticipants($event)" class="btn fill flex-1">Import</button>
             </div>
         </div>
     </form>
 </p-dialog> 
+
+<p-dialog 
+    header="Push to ExamAlpha" 
+    [focusOnShow]="false" [modal]="true" 
+    [(visible)]="showPushDialog" 
+    [style]="{ width: '30rem', margin: '0 10px' }">
+
+    <form [formGroup]="pushForm" class="form">
+        <div class="form-container gap-3">
+
+            <div>
+                <label class="text-gray-700 font-medium mb-2 block">IP Address</label>
+                <input type="text" formControlName="ipAddress" placeholder="Enter IP Address"
+                    class="w-full rounded-xl border border-gray-200 bg-white! p-4 text-gray-900 outline-none transition placeholder:text-gray-400">
+
+                    @if(pushForm.get('ipAddress')?.touched && pushForm.get('ipAddress')?.invalid) {
+                        <div class="text-red-500 text-xs mt-1">
+                            @if(pushForm.get('ipAddress')?.errors?.['required']) {
+                                <div >IP Address is required.</div>
+                            }
+
+                            @if(pushForm.get('ipAddress')?.errors?.['pattern']) {
+                                <div >Invalid IP Address format.</div>
+                            }
+                        </div>
+                    }
+
+            </div>
+
+            <div class="border rounded-md border-gray-200 bg-gray-50 p-5">
+                <label class="text-gray-700 font-medium mb-2 block">Protocol</label>
+                <div class="flex items-center gap-5 mt-2">
+                    <div class="flex items-center gap-2">
+                        <input type="radio" id="http" value="http" formControlName="protocol" class="cursor-pointer accent-primary">
+                        <label for="http" class="cursor-pointer text-gray-700">Use HTTP</label>
+                    </div>
+                    <div class="flex items-center gap-2">
+                        <input type="radio" id="https" value="https" formControlName="protocol" class="cursor-pointer accent-primary">
+                        <label for="https" class="cursor-pointer text-gray-700">Use HTTPS</label>
+                    </div>
+                </div>
+
+                @if(pushForm.get('protocol')?.touched && pushForm.get('protocol')?.invalid) {
+                    <div class="text-red-500 text-xs mt-1">
+                        Please select a protocol.
+                    </div>
+                }
+            </div>
+
+            <div class="flex items-center justify-end gap-3 mt-3">
+                <button class="btn outline" type="button" (click)="pushForm.reset();showPushDialog = false">
+                    Cancel
+                </button>
+                <button [disabled]="pushForm.invalid" class="btn fill" type="button" (click)="pushToExamAlpha($event)">
+                    Push
+                </button>
+            </div>
+
+        </div>
+    </form>
+</p-dialog>

@@ -9,7 +9,14 @@ const routes: Routes = [
             { path: '', redirectTo: 'subject', pathMatch: 'full' },
             { path: 'subject', loadComponent: () => import('../dashboard/subjects/subjects') },
             { path: 'exam-year', loadComponent: () => import('../dashboard/exam-year/exam-year') },
-            { path: 'exam', loadComponent: () => import('../dashboard/exams/exams') },
+            { path: 'admin', loadComponent: () => import('../dashboard/admins/admins') },
+            { 
+                path: 'exam',
+                children: [
+                    { path: '', loadComponent: () => import('../dashboard/exam/list/list') },
+                    { path: ':examId', loadComponent: () => import('../dashboard/exam/view/view') }
+                ]
+            },
             { 
                 path: 'center',
                 children: [
