@@ -102,6 +102,25 @@ export default class View {
       });
   }
 
+  exportPassport(event: Event) {
+    const btn = event.target as HTMLButtonElement
+    btn.disabled = true
+
+    this._dataService.exportPassport(this.examId()!)
+      .pipe(
+        this._toast.observe({
+          loading: 'Exporting passport....',
+          success: (res: any) => res.message ?? 'Passport exported successfully!',
+          error: (e: unknown) => {
+            const err = e as HttpErrorResponse;
+            return err.error?.message ?? 'Sorry! Unable to complete task';
+          }
+        }),
+        finalize(() => btn.disabled = false)
+      )
+      .subscribe();
+  }
+
 
   onFileSelected(event: Event) {
     const inputEl = event.target as HTMLInputElement;

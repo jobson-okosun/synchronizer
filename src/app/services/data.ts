@@ -92,6 +92,10 @@ export default class DataService {
         return this._http.post<ReqResponse>(`${this._domain}/participants/import/${ this.selectedSession()?.id }`, payload)
     }
 
+    exportPassport(examId: string): Observable<ReqResponse> {
+        return this._http.post<ReqResponse>(`${this._domain}/passports/upload/session/${ this.selectedSession()?.id }/exam/${ examId }`, {})
+    }
+
     fetchCenters(size: Signal<number>, page: Signal<number>, examId: InputSignal<string | undefined>): HttpResourceRef<CentersResponse | undefined> {
         return httpResource<CentersResponse | undefined>(() => this.selectedSession()?.id ? `${this._domain}/exams/${ examId() }/session/${ this.selectedSession()?.id }/centres?page=${ page() }&size=${ size() }` : undefined)
     }
